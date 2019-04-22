@@ -1,0 +1,9 @@
+[package]
+name = "blush"
+version = "0.1.0"
+authors = ["Henry Wallace <henry@henrywallace.io>"]
+edition = "2018"
+
+[dependencies]
+ordered-float = "1.0.2"
+num-traits = "0.2.6"

@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 ordered-float = "1.0.2"
 num-traits = "0.2.6"
+lexical = "2.1.0"

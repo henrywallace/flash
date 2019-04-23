@@ -1,8 +1,12 @@
+use lexical;
 use num_traits::ToPrimitive;
 use ordered_float::OrderedFloat;
 use std::collections::{BinaryHeap, HashMap};
+use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+
+type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 fn norm(p: f32, u: &[f32], v: &[f32]) -> f32 {
     if u.len() != v.len() {
@@ -24,13 +28,11 @@ struct NaiveIndex {
 //
 // TODO: Define a trait shared across different LSH methods.
 impl NaiveIndex {
-    fn new() -> NaiveIndex {
-        NaiveIndex {
+    fn from_path(path: &str, skip: usize) -> Result<NaiveIndex> {
+        let mut idx = NaiveIndex {
             vecs: HashMap::new(),
-        }
-    }
+        };
 
-    fn load(&mut self, path: &str, skip: usize) {
         let f = File::open(path).unwrap();
         for (i, line) in BufReader::new(f).lines().enumerate() {
             if i < skip {
@@ -43,16 +45,18 @@ impl NaiveIndex {
                     word = Some(part.to_owned());
                     continue;
                 }
-                let x: f32 = part.parse().unwrap();
+                let x: f32 = lexical::try_parse(part)?;
                 vec.push(x.to_owned());
             }
             match word {
                 Some(word) => {
-                    self.vecs.insert(word, vec.to_owned());
+                    idx.vecs.insert(word, vec.to_owned());
                 }
                 None => println!("empty line: {}", i),
             }
         }
+
+        Ok(idx)
     }
 
     fn similar(&self, query: &[f32], k: u8) -> Vec<(String, f32)> {
@@ -73,13 +77,13 @@ impl NaiveIndex {
     }
 }
 
-fn main() {
-    let mut n = NaiveIndex::new();
+fn main() -> Result<()> {
     // TODO: Create script to download prepare this data.
     // See https://fasttext.cc/docs/en/english-vectors.html
     // Here we head -10000 for sake of faster manual testing.
-    n.load("/home/henrywallace/Downloads/cc.en.300.10k.vec", 1);
-    dbg!(n.vecs.len());
-    let vec = &n.vecs["president"];
-    dbg!(n.similar(vec, 8));
+    let idx = NaiveIndex::from_path("/home/henrywallace/Downloads/cc.en.300.10k.vec", 1)?;
+    dbg!(idx.vecs.len());
+    let vec = &idx.vecs["apple"];
+    dbg!(idx.similar(vec, 8));
+    Ok(())
 }

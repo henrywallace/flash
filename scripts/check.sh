@@ -3,6 +3,6 @@
 set -e
 
 cargo fmt -- --check
-cargo clippy --all-targets -- -D warnings
+cargo clippy --all-targets
 cargo test
 

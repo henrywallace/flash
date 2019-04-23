@@ -72,9 +72,9 @@ fn main() -> Result<()> {
     // TODO: Create script to download prepare this data.
     // See https://fasttext.cc/docs/en/english-vectors.html
     // Here we head -10000 for sake of faster manual testing.
-    let idx = NaiveIndex::from_path("/home/henrywallace/Downloads/cc.en.300.10k.vec", 1)?;
+    let idx = NaiveIndex::from_path("data/glove.840B.300d.txt.tiny", 1)?;
     dbg!(idx.vecs.len());
-    let vec = &idx.vecs["apple"];
+    let vec = &idx.vecs["pokemon"];
     dbg!(idx.similar(vec, 8));
     Ok(())
 }

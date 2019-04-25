@@ -1,3 +1,5 @@
+use clap::{crate_authors, crate_version, App, Arg, SubCommand};
+
 use lexical;
 use num_traits::ToPrimitive;
 use ordered_float::OrderedFloat;
@@ -70,12 +72,34 @@ impl NaiveIndex {
 }
 
 fn main() -> Result<()> {
-    // TODO: Create script to download prepare this data.
-    // See https://fasttext.cc/docs/en/english-vectors.html
-    // Here we head -10000 for sake of faster manual testing.
-    let idx = NaiveIndex::from_path("data/glove.840B.300d.txt.tiny", 1)?;
-    dbg!(idx.vecs.len());
-    let vec = &idx.vecs["pokemon"];
-    dbg!(idx.similar(vec, 8));
+    let matches = App::new("blush")
+        .author(crate_authors!())
+        .version(crate_version!())
+        .subcommand(
+            SubCommand::with_name("query")
+                .about("query for nearest neighbors given some vec key")
+                .arg(Arg::with_name("key").required(true))
+                .arg(Arg::with_name("data").required(true))
+                .arg(Arg::with_name("index").long("index").default_value("naive")),
+        )
+        .get_matches();
+
+    if let Some(matches) = matches.subcommand_matches("query") {
+        let key = matches.value_of("key").unwrap();
+        let data = matches.value_of("data").unwrap();
+        match matches.value_of("index") {
+            Some("naive") => {
+                // TODO: We should really have a separate parser type. For instance glove,
+                // fasttext, generic text embedding file, or binary embedding file.
+                let idx = NaiveIndex::from_path(data, 1)?;
+                dbg!(idx.vecs.len());
+                let vec = &idx.vecs[key];
+                dbg!(idx.similar(vec, 8));
+            }
+            // TODO: What's a better way to return CLI errors here?
+            Some(index) => println!("unsupported index: {}", index),
+            None => unreachable!(),
+        }
+    }
     Ok(())
 }

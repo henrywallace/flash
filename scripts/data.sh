@@ -8,7 +8,7 @@ glove() {
     curl -L -o $zip -C - http://nlp.stanford.edu/data/glove.840B.300d.zip
   fi
   [ -f $txt ] || unzip $zip -d data
-  [ -f $tiny ] || head -20000 $txt > $tiny
+  [ -f $tiny ] || head -10000 $txt > $tiny
 }
 
 all() {

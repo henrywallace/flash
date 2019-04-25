@@ -1,7 +1,7 @@
 [package]
 name = "blush"
 version = "0.1.0"
-authors = ["Henry Wallace <henry@henrywallace.io>"]
+authors = ["Henry Wallace <h@henrywallace.io>"]
 edition = "2018"
 
 [dependencies]
@@ -11,3 +11,4 @@ lexical = "2.1.0"
 ndarray = "0.12.1"
 ndarray-rand = "0.9.0"
 rand = "0.6.5"
+clap = "2.33.0"

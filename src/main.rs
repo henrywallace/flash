@@ -7,6 +7,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 mod distance;
+mod hash;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 

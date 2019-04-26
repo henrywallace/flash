@@ -1,6 +1,7 @@
 use clap::{crate_authors, crate_version, App, Arg, SubCommand};
-
 use std::error::Error;
+
+use index::Index;
 
 mod distance;
 mod hash;

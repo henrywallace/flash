@@ -10,6 +10,12 @@ use std::io::{BufRead, BufReader};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+pub trait Index {
+    fn get(&self, key: &str) -> Option<Vec<f32>>;
+    fn len(&self) -> usize;
+    fn similar(&self, query: &[f32], k: u8) -> Vec<(String, f32)>;
+}
+
 pub struct Naive {
     vecs: HashMap<String, Vec<f32>>,
 }
@@ -49,19 +55,21 @@ impl Naive {
 
         Ok(idx)
     }
+}
 
-    pub fn get(&self, key: &str) -> Option<Vec<f32>> {
+impl Index for Naive {
+    fn get(&self, key: &str) -> Option<Vec<f32>> {
         match self.vecs.get(key) {
             Some(v) => Some(v.clone()),
             None => None,
         }
     }
 
-    pub fn len(&self) -> usize {
+    fn len(&self) -> usize {
         self.vecs.len()
     }
 
-    pub fn similar(&self, query: &[f32], k: u8) -> Vec<(String, f32)> {
+    fn similar(&self, query: &[f32], k: u8) -> Vec<(String, f32)> {
         let mut heap = BinaryHeap::new();
         for (word, vec) in self.vecs.iter() {
             let d = distance::pnorm(2.0, query, vec);

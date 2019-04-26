@@ -1,4 +1,5 @@
 use crate::distance;
+
 use lexical;
 use num_traits::ToPrimitive;
 use ordered_float::OrderedFloat;
@@ -9,7 +10,7 @@ use std::io::{BufRead, BufReader};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
-pub struct NaiveIndex {
+pub struct Naive {
     vecs: HashMap<String, Vec<f32>>,
 }
 
@@ -17,9 +18,9 @@ pub struct NaiveIndex {
 // Can we make clippy more angry for eliding these docs?
 //
 // TODO: Define a trait shared across different LSH methods.
-impl NaiveIndex {
-    pub fn from_path(path: &str, skip: usize) -> Result<NaiveIndex> {
-        let mut idx = NaiveIndex {
+impl Naive {
+    pub fn from_path(path: &str, skip: usize) -> Result<Naive> {
+        let mut idx = Naive {
             vecs: HashMap::new(),
         };
 

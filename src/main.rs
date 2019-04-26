@@ -28,7 +28,7 @@ fn main() -> Result<()> {
             Some("naive") => {
                 // TODO: We should really have a separate parser type. For instance glove,
                 // fasttext, generic text embedding file, or binary embedding file.
-                let idx = index::NaiveIndex::from_path(data, 1)?;
+                let idx = index::Naive::from_path(data, 1)?;
                 dbg!(idx.len());
                 let vec = idx.get(key).unwrap();
                 dbg!(idx.similar(vec.as_slice(), 8));

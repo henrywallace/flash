@@ -1,10 +1,12 @@
 use clap::{crate_authors, crate_version, App, Arg, SubCommand};
+use serde_json;
 use std::error::Error;
+use std::fs::File;
 
 use index::Index;
 
 mod distance;
-mod hash;
+mod eval;
 mod index;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -19,6 +21,12 @@ fn main() -> Result<()> {
                 .arg(Arg::with_name("key").required(true))
                 .arg(Arg::with_name("data").required(true))
                 .arg(Arg::with_name("index").long("index").default_value("naive")),
+        )
+        .subcommand(
+            SubCommand::with_name("eval")
+                .about("foobar")
+                .arg(Arg::with_name("data").required(true))
+                .arg(Arg::with_name("queries").required(true)),
         )
         .get_matches();
 
@@ -38,6 +46,16 @@ fn main() -> Result<()> {
             Some(index) => println!("unsupported index: {}", index),
             None => unreachable!(),
         }
+    }
+    if let Some(matches) = matches.subcommand_matches("eval") {
+        let data = matches.value_of("data").unwrap();
+        let queries = matches.value_of("queries").unwrap();
+        let idx = index::Naive::from_path(data, 1)?;
+        let eval = eval::Eval::from_path(queries)?;
+        let gold = eval.gen(idx)?;
+        // TODO: Make this output configurable.
+        let f = File::create("gold.json")?;
+        serde_json::to_writer_pretty(f, &gold)?;
     }
     Ok(())
 }

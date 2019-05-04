@@ -16,6 +16,7 @@ pub trait Index {
     fn similar(&self, query: &[f32], k: u8) -> Vec<(String, f32)>;
 }
 
+#[derive(Debug)]
 pub struct Naive {
     vecs: HashMap<String, Vec<f32>>,
 }
